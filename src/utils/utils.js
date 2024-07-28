@@ -43,8 +43,18 @@ async function getCategory(category) {
  * @param {string} filter - filter to be removed from the movie name
  */
 function cleanUpNames(movies, filter) {
+    const commonSymbols = ['&', ':', ';', ',', '_', '&amp;'];
     movies.forEach(movie => {
-        movie.name = movie.name.replace(`${filter}`, '').trim().replace(/\s/g, '-');
+        // Remove the filter prefix
+        movie.name = movie.name.replace(new RegExp(`^${filter}`, 'g'), '').trim();
+
+        // Remove common symbols
+        commonSymbols.forEach(symbol => {
+            movie.name = movie.name.replace(new RegExp(`\\${symbol}`, 'g'), '');
+        });
+
+        // Replace whitespace with dashes
+        movie.name = movie.name.replace(/\s+/g, '-');
     });
 }
 
