@@ -1,0 +1,19 @@
+{
+  "name": "megaripper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "mikicvi <88291034+mikicvi@users.noreply.github.com>",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "fs-extra": "^11.2.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  },
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "jest"
+  }
+}
