@@ -27,6 +27,7 @@ A Node.js project to obtain JSON list of media, construct, save, and download me
     REGEXFILTER=some-regex
     CATEGORY=1234
     ```
+    If in the docker environment, add `DOCKER=true` to your env
 
 ## Usage
 
