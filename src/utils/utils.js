@@ -43,18 +43,18 @@ async function getCategory(category) {
  * @param {string} filter - filter to be removed from the movie name
  */
 function cleanUpNames(movies, filter) {
-    const commonSymbols = ['&', ':', ';', ',', '_', '&amp;'];
+    const commonSymbols = ['&', ':', ';', ',', '_', '&amp;', '|', '!', '?', '(', ')', '[', ']', '{', '}', '<', '>', '*', '^', '$', '#', '@', '+', '=', '~', '`', '%', '"', '\'', '\\', '/', '.'];
     movies.forEach(movie => {
         // Remove the filter prefix
         movie.name = movie.name.replace(new RegExp(`^${filter}`, 'g'), '').trim();
-
         // Remove common symbols
         commonSymbols.forEach(symbol => {
             movie.name = movie.name.replace(new RegExp(`\\${symbol}`, 'g'), '');
         });
-
         // Replace whitespace with dashes
         movie.name = movie.name.replace(/\s+/g, '-');
+        // No symbols at the start of the name
+        movie.name = movie.name.replace(/^-+/, '');
     });
 }
 
@@ -81,7 +81,6 @@ async function createDownloadList(movies, filePath) {
  */
 async function createDownloadLinks(downloadUrl, movies) {
     const downloadLinks = movies.map(movie => `${downloadUrl}${movie.stream_id}.${movie.container_extension}`);
-
     // Push the download links to the array of movies
     movies.forEach((movie, index) => {
         movie.download_link = downloadLinks[index];
