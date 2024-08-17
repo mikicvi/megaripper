@@ -5,7 +5,7 @@ require('dotenv').config();
 
 /**
  * Ensure the directory exists, if not create it
- * @param {*} dirPath 
+ * @param {*} dirPath
  * @returns {Promise<void>}
  */
 async function ensureDirExists(dirPath) {
@@ -13,14 +13,16 @@ async function ensureDirExists(dirPath) {
 }
 
 /**
- * Gets the list of movies based on the category 
+ * Gets the list of movies based on the category
  * Takes username, password and category from the environment variables
  * @param {number} category
  * @returns {Promise<Array>} - array of movie objects
  */
 async function getCategory(category) {
     try {
-        const response = await axios.get(`${process.env.BASEURL}/player_api.php?username=${process.env.USERNAME}&password=${process.env.PASSWORD}&action=get_vod_streams&category_id=${category}`);
+        const response = await axios.get(
+            `${process.env.BASEURL}/player_api.php?username=${process.env.USERNAME}&password=${process.env.PASSWORD}&action=get_vod_streams&category_id=${category}`,
+        );
 
         // Ensure response is an array
         if (Array.isArray(response.data)) {
@@ -38,17 +40,51 @@ async function getCategory(category) {
 }
 
 /**
- * Cleans up the name of the movie, remove the filter prefix and trim the whitespace, replace the whitespace with a dash
+ * Clean up the movie names by removing the filter and replacing common symbols that could cause issues
+ * in file names on various operating systems
  * @param {Array} movies - array of movie objects
  * @param {string} filter - filter to be removed from the movie name
  */
 function cleanUpNames(movies, filter) {
-    const commonSymbols = ['&', ':', ';', ',', '_', '&amp;', '|', '!', '?', '(', ')', '[', ']', '{', '}', '<', '>', '*', '^', '$', '#', '@', '+', '=', '~', '`', '%', '"', '\'', '\\', '/', '.'];
-    movies.forEach(movie => {
+    const commonSymbols = [
+        '&',
+        ':',
+        ';',
+        ',',
+        '_',
+        '&amp;',
+        '|',
+        '!',
+        '?',
+        '(',
+        ')',
+        '[',
+        ']',
+        '{',
+        '}',
+        '<',
+        '>',
+        '*',
+        '^',
+        '$',
+        '#',
+        '@',
+        '+',
+        '=',
+        '~',
+        '`',
+        '%',
+        '"',
+        "'",
+        '\\',
+        '/',
+        '.',
+    ];
+    movies.forEach((movie) => {
         // Remove the filter prefix
         movie.name = movie.name.replace(new RegExp(`^${filter}`, 'g'), '').trim();
         // Remove common symbols
-        commonSymbols.forEach(symbol => {
+        commonSymbols.forEach((symbol) => {
             movie.name = movie.name.replace(new RegExp(`\\${symbol}`, 'g'), '');
         });
         // Replace whitespace with dashes
@@ -67,7 +103,7 @@ function cleanUpNames(movies, filter) {
 async function createDownloadList(movies, filePath) {
     // Make new file for download links and movie names to be saved in format (movie_name, download_link)
     const newFile = fs.createWriteStream(filePath);
-    movies.forEach(movie => {
+    movies.forEach((movie) => {
         newFile.write(`${movie.name}, ${movie.download_link}\n`);
     });
     newFile.end();
@@ -80,12 +116,17 @@ async function createDownloadList(movies, filePath) {
  * @returns {Promise<void>}
  */
 async function createDownloadLinks(downloadUrl, movies) {
-    const downloadLinks = movies.map(movie => `${downloadUrl}${movie.stream_id}.${movie.container_extension}`);
+    const downloadLinks = movies.map((movie) => `${downloadUrl}${movie.stream_id}.${movie.container_extension}`);
     // Push the download links to the array of movies
     movies.forEach((movie, index) => {
         movie.download_link = downloadLinks[index];
     });
 }
 
-
-module.exports = { ensureDirExists, getCategory, cleanUpNames, createDownloadLinks, createDownloadList };
+module.exports = {
+    ensureDirExists,
+    getCategory,
+    cleanUpNames,
+    createDownloadLinks,
+    createDownloadList,
+};

@@ -30,8 +30,8 @@ async function downloadVideo(url, outputDir, fileName, container_extension, maxR
                 responseType: 'stream',
                 maxRedirects: 5,
                 headers: {
-                    'Range': `bytes=${fileSize}-`
-                }
+                    Range: `bytes=${fileSize}-`,
+                },
             });
 
             await new Promise((resolve, reject) => {
